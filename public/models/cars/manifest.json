@@ -1,0 +1,468 @@
+{
+ "saba": {
+  "wheels": {
+   "fl": [
+    0.773,
+    0.33,
+    1.278
+   ],
+   "fr": [
+    -0.773,
+    0.33,
+    1.278
+   ],
+   "bl": [
+    0.8,
+    0.367,
+    -1.471
+   ],
+   "br": [
+    -0.8,
+    0.367,
+    -1.471
+   ]
+  },
+  "credit": "Daniel Zhabotinsky (CC-BY 4.0, Sketchfab)",
+  "wheelRadius": 0.367,
+  "steering": [
+   0.374,
+   0.783,
+   0.658
+  ],
+  "size": [
+   2.18,
+   1.324,
+   4.514
+  ],
+  "tris": 24512,
+  "materials": [
+   "Carbadges_misc_U",
+   "Numberplates_Misk_U",
+   "Paint",
+   "RB1c_Tire_1k",
+   "UCB_BOTTOM",
+   "UCB_Interiors_1",
+   "UCB_Lights_and_Glass",
+   "UCB_Lights_and_Glass_Transperent"
+  ]
+ },
+ "exterminator": {
+  "wheels": {
+   "fl": [
+    0.732,
+    0.334,
+    1.255
+   ],
+   "fr": [
+    -0.732,
+    0.334,
+    1.255
+   ],
+   "bl": [
+    0.732,
+    0.334,
+    -1.318
+   ],
+   "br": [
+    -0.732,
+    0.334,
+    -1.318
+   ]
+  },
+  "credit": "Daniel Zhabotinsky (CC-BY 4.0, Sketchfab)",
+  "wheelRadius": 0.334,
+  "size": [
+   1.983,
+   1.325,
+   4.698
+  ],
+  "tris": 14789,
+  "materials": [
+   "Carbadges_misc_U",
+   "Numberplates_Misk_U",
+   "Paint",
+   "RB1c_Tire_1k",
+   "UCB_BOTTOM_LT",
+   "UCB_Interiors_2",
+   "UCB_Lights_and_Glass",
+   "UCB_Lights_and_Glass_Transperent"
+  ]
+ },
+ "kiri": {
+  "wheels": {
+   "fl": [
+    0.711,
+    0.287,
+    1.323
+   ],
+   "fr": [
+    -0.71,
+    0.286,
+    1.323
+   ],
+   "bl": [
+    0.711,
+    0.287,
+    -1.136
+   ],
+   "br": [
+    -0.71,
+    0.286,
+    -1.136
+   ]
+  },
+  "credit": "Daniel Zhabotinsky (CC-BY 4.0, Sketchfab)",
+  "wheelRadius": 0.286,
+  "steering": [
+   0.331,
+   0.783,
+   0.382
+  ],
+  "size": [
+   1.761,
+   1.32,
+   4.314
+  ],
+  "tris": 20314,
+  "materials": [
+   "Carbadges_misc_U",
+   "Numberplates_Misk_U",
+   "Paint",
+   "RB1c_Tire_1k",
+   "UCB_BOTTOM_GT",
+   "UCB_Interior_Trim",
+   "UCB_Lights_and_Glass",
+   "UCB_Lights_and_Glass_Transperent"
+  ]
+ },
+ "tiara": {
+  "wheels": {
+   "fl": [
+    0.643,
+    0.276,
+    1.283
+   ],
+   "fr": [
+    -0.647,
+    0.276,
+    1.283
+   ],
+   "bl": [
+    0.643,
+    0.276,
+    -1.107
+   ],
+   "br": [
+    -0.647,
+    0.276,
+    -1.107
+   ]
+  },
+  "credit": "Daniel Zhabotinsky (CC-BY 4.0, Sketchfab)",
+  "wheelRadius": 0.276,
+  "steering": [
+   0.355,
+   0.654,
+   0.458
+  ],
+  "size": [
+   1.736,
+   1.217,
+   4.167
+  ],
+  "tris": 18547,
+  "materials": [
+   "Carbadges_misc_U",
+   "Numberplates_Misk_U",
+   "Paint",
+   "RB1c_Tire_1k",
+   "UCB_BOTTOM",
+   "UCB_Interiors_2",
+   "UCB_Lights_and_Glass",
+   "UCB_Lights_and_Glass_Transperent"
+  ]
+ },
+ "phoenix": {
+  "wheels": {
+   "fl": [
+    0.857,
+    0.325,
+    1.544
+   ],
+   "fr": [
+    -0.855,
+    0.322,
+    1.544
+   ],
+   "bl": [
+    0.857,
+    0.325,
+    -1.197
+   ],
+   "br": [
+    -0.855,
+    0.322,
+    -1.197
+   ]
+  },
+  "credit": "Daniel Zhabotinsky (CC-BY 4.0, Sketchfab)",
+  "wheelRadius": 0.322,
+  "steering": [
+   0.371,
+   0.788,
+   0.103
+  ],
+  "size": [
+   2.088,
+   1.329,
+   4.89
+  ],
+  "tris": 25943,
+  "materials": [
+   "Carbadges_misc_U",
+   "Numberplates_Misk_U",
+   "Paint",
+   "RB1c_Tire_1k",
+   "UCB_BOTTOM",
+   "UCB_Interiors_2",
+   "UCB_Lights_and_Glass",
+   "UCB_Lights_and_Glass_Transperent"
+  ]
+ },
+ "duke": {
+  "wheels": {
+   "fl": [
+    0.778,
+    0.316,
+    1.633
+   ],
+   "fr": [
+    -0.778,
+    0.316,
+    1.633
+   ],
+   "bl": [
+    0.778,
+    0.316,
+    -1.301
+   ],
+   "br": [
+    -0.778,
+    0.316,
+    -1.301
+   ]
+  },
+  "credit": "Daniel Zhabotinsky (CC-BY 4.0, Sketchfab)",
+  "wheelRadius": 0.316,
+  "steering": [
+   0.339,
+   0.858,
+   0.324
+  ],
+  "size": [
+   1.964,
+   1.399,
+   5.235
+  ],
+  "tris": 18554,
+  "materials": [
+   "Carbadges_misc_U",
+   "Numberplates_Misk_U",
+   "Paint",
+   "RB1c_Tire_1k",
+   "UCB_BOTTOM_LT",
+   "UCB_Interiors_2",
+   "UCB_Lights_and_Glass",
+   "UCB_Lights_and_Glass_Transperent"
+  ]
+ },
+ "sanremo": {
+  "wheels": {
+   "fl": [
+    0.707,
+    0.284,
+    1.289
+   ],
+   "fr": [
+    -0.707,
+    0.284,
+    1.289
+   ],
+   "bl": [
+    0.707,
+    0.284,
+    -1.204
+   ],
+   "br": [
+    -0.707,
+    0.284,
+    -1.204
+   ]
+  },
+  "credit": "Daniel Zhabotinsky (CC-BY 4.0, Sketchfab)",
+  "wheelRadius": 0.284,
+  "steering": [
+   0.309,
+   0.772,
+   0.012
+  ],
+  "size": [
+   1.715,
+   1.249,
+   4.183
+  ],
+  "tris": 13627,
+  "materials": [
+   "Carbadges_misc_U",
+   "Numberplates_Misk_U",
+   "Paint",
+   "RB1c_Tire_1k",
+   "UCB_BOTTOM_LT",
+   "UCB_GenMaskTrim",
+   "UCB_Interiors_2",
+   "UCB_Lights_and_Glass",
+   "UCB_Lights_and_Glass_Transperent"
+  ]
+ },
+ "asti": {
+  "wheels": {
+   "fl": [
+    0.723,
+    0.308,
+    1.237
+   ],
+   "fr": [
+    -0.715,
+    0.299,
+    1.237
+   ],
+   "bl": [
+    0.742,
+    0.308,
+    -1.285
+   ],
+   "br": [
+    -0.733,
+    0.299,
+    -1.285
+   ]
+  },
+  "credit": "Daniel Zhabotinsky (CC-BY 4.0, Sketchfab)",
+  "wheelRadius": 0.299,
+  "steering": [
+   0.355,
+   0.77,
+   0.334
+  ],
+  "size": [
+   1.84,
+   1.386,
+   3.905
+  ],
+  "tris": 20913,
+  "materials": [
+   "Carbadges_misc_U",
+   "Numberplates_Misk_U",
+   "Paint",
+   "RB1c_Tire_1k",
+   "UCB_BOTTOM",
+   "UCB_Interiors_2",
+   "UCB_Lights_and_Glass",
+   "UCB_Lights_and_Glass_Transperent"
+  ]
+ },
+ "lightbody": {
+  "wheels": {
+   "fl": [
+    0.782,
+    0.351,
+    1.586
+   ],
+   "fr": [
+    -0.778,
+    0.349,
+    1.586
+   ],
+   "bl": [
+    0.782,
+    0.351,
+    -1.314
+   ],
+   "br": [
+    -0.778,
+    0.349,
+    -1.314
+   ]
+  },
+  "credit": "Daniel Zhabotinsky (CC-BY 4.0, Sketchfab)",
+  "wheelRadius": 0.349,
+  "steering": [
+   0.379,
+   1.139,
+   0.567
+  ],
+  "size": [
+   2.141,
+   1.92,
+   4.926
+  ],
+  "tris": 37387,
+  "materials": [
+   "Carbadges_misc_U",
+   "Numberplates_Misk_U",
+   "Paint",
+   "RO1a_Tire",
+   "UCB_BOTTOM",
+   "UCB_Interiors_1",
+   "UCB_Lights_and_Glass",
+   "UCB_Lights_and_Glass_Transperent"
+  ]
+ },
+ "cop": {
+  "wheels": {
+   "fl": [
+    0.737,
+    0.304,
+    1.396
+   ],
+   "fr": [
+    -0.739,
+    0.303,
+    1.396
+   ],
+   "bl": [
+    0.737,
+    0.304,
+    -1.255
+   ],
+   "br": [
+    -0.739,
+    0.303,
+    -1.255
+   ]
+  },
+  "credit": "Daniel Zhabotinsky (CC-BY 4.0, Sketchfab)",
+  "wheelRadius": 0.303,
+  "steering": [
+   0.34,
+   0.782,
+   0.288
+  ],
+  "size": [
+   1.832,
+   1.572,
+   5.075
+  ],
+  "tris": 19499,
+  "materials": [
+   "Carbadges_misc_U",
+   "Numberplates_Misk_U",
+   "Paint",
+   "RB1c_Tire_1k",
+   "UCB_BOTTOM_GT",
+   "UCB_Interior_Trim",
+   "UCB_Lights_and_Glass",
+   "UCB_Lights_and_Glass_Transperent"
+  ]
+ }
+}

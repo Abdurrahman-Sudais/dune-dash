@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dune Dash</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="loading" class="screen on">
+      <div class="logo">DUNE<span>DASH</span></div>
+      <div class="bar"><i id="load-fill"></i></div>
+      <p id="load-text">Loading garage…</p>
+    </div>
+
+    <div id="menu" class="screen">
+      <div class="logo small">DUNE<span>DASH</span></div>
+      <div id="menu-left" class="panel">
+        <div id="tabs"></div>
+        <div id="tab-body"></div>
+      </div>
+      <div id="menu-right" class="panel">
+        <h2 id="card-name"></h2>
+        <div id="card-stats"></div>
+        <div id="card-driver"></div>
+      </div>
+      <div id="menu-bottom">
+        <div id="maps"></div>
+        <button id="race-btn">RACE ▶</button>
+      </div>
+      <p id="menu-hint">Drag to spin the car</p>
+      <p id="credits">Cars: “Low poly model” series by Daniel Zhabotinsky (CC-BY 4.0) · People &amp; animation: Quaternius (CC0) · Props: Kenney (CC0)</p>
+    </div>
+
+    <div id="hud" class="screen">
+      <div id="lap-panel" class="panel">
+        <div class="row"><span class="label">LAP</span><span id="lap">1</span></div>
+        <div class="row"><span class="label">TIME</span><span id="time">0:00.00</span></div>
+        <div class="row"><span class="label">BEST</span><span id="best">--</span></div>
+        <div class="row"><span class="label">💥</span><span id="takedowns">0</span></div>
+      </div>
+      <div id="pos-panel" class="panel"><span id="pos">1st</span><small id="pos-of">/6</small></div>
+      <canvas id="minimap" width="170" height="170"></canvas>
+      <div id="item" class="panel"><div id="item-icon"></div><div id="item-name">No item</div><div class="key">E</div></div>
+      <div id="skill" class="panel">
+        <div id="skill-icon"></div>
+        <div class="skill-text"><div id="skill-name"></div><div class="skill-bar"><i id="skill-fill"></i></div></div>
+        <div class="key">Q</div>
+      </div>
+      <div id="warning">⚠ MISSILE INCOMING</div>
+      <div id="countdown"></div>
+      <div id="speedo" class="panel"><span id="speed">0</span><small>km/h</small></div>
+      <div id="drift"><div id="drift-fill"></div></div>
+      <div id="wrong-way">WRONG WAY</div>
+      <div id="toast"></div>
+      <div id="help" class="panel">
+        <b>Auto-gas</b> on (<b>T</b> toggles) · <b>S/↓</b> brake · <b>A D</b> steer · <b>SPACE</b> drift · <b>C</b> side-slam · <b>E</b> item · <b>Q</b> skill · <b>R</b> reset · <b>M</b> mute · <b>ESC</b> pause
+      </div>
+      <div id="results" class="panel">
+        <h2>RACE RESULTS</h2>
+        <ol id="results-list"></ol>
+        <div class="buttons"><button id="again-btn">RACE AGAIN <small>ENTER</small></button><button id="garage-btn" class="alt">GARAGE <small>G</small></button></div>
+      </div>
+    </div>
+
+    <div id="pause" class="screen">
+      <div class="panel pause-box">
+        <h2>PAUSED</h2>
+        <button id="resume-btn">RESUME</button>
+        <button id="restart-btn" class="alt">RESTART</button>
+        <button id="quit-btn" class="alt">GARAGE</button>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

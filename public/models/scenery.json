@@ -1,0 +1,628 @@
+{
+ "coconut_palm": {
+  "size": [
+   10.02,
+   10.0,
+   6.4
+  ],
+  "theme": "beach",
+  "source": "coconut_palm",
+  "tris": 2996
+ },
+ "palm_trees_0": {
+  "size": [
+   7.97,
+   9.0,
+   5.38
+  ],
+  "theme": "beach",
+  "source": "palm_trees",
+  "tris": null
+ },
+ "palm_trees_1": {
+  "size": [
+   5.21,
+   8.08,
+   5.42
+  ],
+  "theme": "beach",
+  "source": "palm_trees",
+  "tris": null
+ },
+ "palm_trees_2": {
+  "size": [
+   5.1,
+   7.18,
+   5.42
+  ],
+  "theme": "beach",
+  "source": "palm_trees",
+  "tris": null
+ },
+ "palm_trees_3": {
+  "size": [
+   5.12,
+   6.62,
+   5.2
+  ],
+  "theme": "beach",
+  "source": "palm_trees",
+  "tris": null
+ },
+ "beach_umbrella": {
+  "size": [
+   2.04,
+   2.6,
+   2.34
+  ],
+  "theme": "beach",
+  "source": "beach_umbrella",
+  "tris": 696
+ },
+ "beach_hut": {
+  "size": [
+   4.62,
+   4.2,
+   9.43
+  ],
+  "theme": "beach",
+  "source": "beach_hut",
+  "tris": 2494
+ },
+ "beachhouse": {
+  "size": [
+   10.18,
+   7.0,
+   10.18
+  ],
+  "theme": "beach",
+  "source": "beachhouse",
+  "tris": 4898
+ },
+ "pier": {
+  "size": [
+   2.26,
+   3.0,
+   6.66
+  ],
+  "theme": "beach",
+  "source": "pier",
+  "tris": 2497
+ },
+ "fishing_boat": {
+  "size": [
+   9.78,
+   4.5,
+   22.0
+  ],
+  "theme": "beach",
+  "source": "fishing_boat",
+  "tris": 3499
+ },
+ "sailboat": {
+  "size": [
+   2.28,
+   11.0,
+   7.62
+  ],
+  "theme": "beach",
+  "source": "sailboat",
+  "tris": null
+ },
+ "lighthouse": {
+  "size": [
+   36.89,
+   24.0,
+   36.89
+  ],
+  "theme": "beach",
+  "source": "lighthouse",
+  "tris": 7910
+ },
+ "desert_rocks_0": {
+  "size": [
+   14.18,
+   7.0,
+   11.5
+  ],
+  "theme": "canyon",
+  "source": "desert_rocks",
+  "tris": 2200
+ },
+ "desert_rocks_1": {
+  "size": [
+   8.72,
+   6.74,
+   9.27
+  ],
+  "theme": "canyon",
+  "source": "desert_rocks",
+  "tris": 700
+ },
+ "desert_rocks_2": {
+  "size": [
+   9.1,
+   5.91,
+   6.75
+  ],
+  "theme": "canyon",
+  "source": "desert_rocks",
+  "tris": 1466
+ },
+ "desert_rocks_3": {
+  "size": [
+   5.62,
+   2.64,
+   4.1
+  ],
+  "theme": "canyon",
+  "source": "desert_rocks",
+  "tris": 1172
+ },
+ "desert_rocks_4": {
+  "size": [
+   6.05,
+   1.56,
+   3.96
+  ],
+  "theme": "canyon",
+  "source": "desert_rocks",
+  "tris": 839
+ },
+ "desert_rocks_5": {
+  "size": [
+   4.16,
+   2.37,
+   2.82
+  ],
+  "theme": "canyon",
+  "source": "desert_rocks",
+  "tris": 1302
+ },
+ "desert_rocks_6": {
+  "size": [
+   2.72,
+   2.31,
+   4.1
+  ],
+  "theme": "canyon",
+  "source": "desert_rocks",
+  "tris": 586
+ },
+ "desert_rocks_7": {
+  "size": [
+   4.09,
+   0.89,
+   2.71
+  ],
+  "theme": "canyon",
+  "source": "desert_rocks",
+  "tris": 376
+ },
+ "desert_rocks_8": {
+  "size": [
+   2.71,
+   1.52,
+   2.67
+  ],
+  "theme": "canyon",
+  "source": "desert_rocks",
+  "tris": 948
+ },
+ "desert_rocks_9": {
+  "size": [
+   1.41,
+   1.75,
+   1.49
+  ],
+  "theme": "canyon",
+  "source": "desert_rocks",
+  "tris": 264
+ },
+ "desert_rocks_10": {
+  "size": [
+   1.57,
+   0.97,
+   1.74
+  ],
+  "theme": "canyon",
+  "source": "desert_rocks",
+  "tris": 376
+ },
+ "desert_rocks_11": {
+  "size": [
+   1.46,
+   1.02,
+   1.58
+  ],
+  "theme": "canyon",
+  "source": "desert_rocks",
+  "tris": 298
+ },
+ "desert_rocks_12": {
+  "size": [
+   1.41,
+   1.09,
+   1.49
+  ],
+  "theme": "canyon",
+  "source": "desert_rocks",
+  "tris": 112
+ },
+ "desert_rocks_13": {
+  "size": [
+   1.46,
+   0.54,
+   1.58
+  ],
+  "theme": "canyon",
+  "source": "desert_rocks",
+  "tris": 250
+ },
+ "cactus_0": {
+  "size": [
+   1.92,
+   4.5,
+   1.72
+  ],
+  "theme": "canyon",
+  "source": "cactus",
+  "tris": null
+ },
+ "cactus_1": {
+  "size": [
+   1.83,
+   4.5,
+   1.63
+  ],
+  "theme": "canyon",
+  "source": "cactus",
+  "tris": null
+ },
+ "cactus_2": {
+  "size": [
+   2.12,
+   4.5,
+   0.76
+  ],
+  "theme": "canyon",
+  "source": "cactus",
+  "tris": null
+ },
+ "cactus_3": {
+  "size": [
+   2.41,
+   3.32,
+   2.32
+  ],
+  "theme": "canyon",
+  "source": "cactus",
+  "tris": null
+ },
+ "cactus_4": {
+  "size": [
+   2.08,
+   3.55,
+   2.2
+  ],
+  "theme": "canyon",
+  "source": "cactus",
+  "tris": null
+ },
+ "cactus_5": {
+  "size": [
+   2.49,
+   3.55,
+   0.48
+  ],
+  "theme": "canyon",
+  "source": "cactus",
+  "tris": null
+ },
+ "cactus_6": {
+  "size": [
+   2.19,
+   2.97,
+   2.1
+  ],
+  "theme": "canyon",
+  "source": "cactus",
+  "tris": null
+ },
+ "cactus_7": {
+  "size": [
+   2.08,
+   3.17,
+   0.48
+  ],
+  "theme": "canyon",
+  "source": "cactus",
+  "tris": null
+ },
+ "cactus_8": {
+  "size": [
+   2.07,
+   2.14,
+   0.48
+  ],
+  "theme": "canyon",
+  "source": "cactus",
+  "tris": null
+ },
+ "suburban_house": {
+  "size": [
+   12.48,
+   8.5,
+   11.41
+  ],
+  "theme": "town",
+  "source": "suburban_house",
+  "tris": 2796
+ },
+ "suburbian_house": {
+  "size": [
+   11.98,
+   8.0,
+   7.44
+  ],
+  "theme": "town",
+  "source": "suburbian_house",
+  "tris": 2400
+ },
+ "nyc_homes": {
+  "size": [
+   21.71,
+   12.0,
+   13.02
+  ],
+  "theme": "town",
+  "source": "nyc_homes",
+  "tris": 3496
+ },
+ "forest_trees_0": {
+  "size": [
+   2.93,
+   11.0,
+   2.83
+  ],
+  "theme": "town",
+  "source": "forest_trees",
+  "tris": 109
+ },
+ "forest_trees_1": {
+  "size": [
+   7.64,
+   9.68,
+   3.8
+  ],
+  "theme": "town",
+  "source": "forest_trees",
+  "tris": 210
+ },
+ "forest_trees_2": {
+  "size": [
+   2.3,
+   8.6,
+   2.33
+  ],
+  "theme": "town",
+  "source": "forest_trees",
+  "tris": 108
+ },
+ "forest_trees_3": {
+  "size": [
+   2.21,
+   8.6,
+   2.33
+  ],
+  "theme": "town",
+  "source": "forest_trees",
+  "tris": 109
+ },
+ "forest_trees_4": {
+  "size": [
+   2.15,
+   8.6,
+   2.15
+  ],
+  "theme": "town",
+  "source": "forest_trees",
+  "tris": 109
+ },
+ "forest_trees_5": {
+  "size": [
+   2.02,
+   8.52,
+   2.01
+  ],
+  "theme": "town",
+  "source": "forest_trees",
+  "tris": 113
+ },
+ "forest_trees_6": {
+  "size": [
+   2.58,
+   8.4,
+   2.48
+  ],
+  "theme": "town",
+  "source": "forest_trees",
+  "tris": 630
+ },
+ "forest_trees_7": {
+  "size": [
+   3.33,
+   6.1,
+   3.33
+  ],
+  "theme": "town",
+  "source": "forest_trees",
+  "tris": 624
+ },
+ "forest_trees_8": {
+  "size": [
+   2.46,
+   6.03,
+   2.46
+  ],
+  "theme": "town",
+  "source": "forest_trees",
+  "tris": 36
+ },
+ "forest_trees_9": {
+  "size": [
+   2.19,
+   3.92,
+   2.53
+  ],
+  "theme": "town",
+  "source": "forest_trees",
+  "tris": 285
+ },
+ "forest_trees_10": {
+  "size": [
+   1.95,
+   3.42,
+   1.81
+  ],
+  "theme": "town",
+  "source": "forest_trees",
+  "tris": 624
+ },
+ "forest_trees_11": {
+  "size": [
+   1.19,
+   1.82,
+   1.19
+  ],
+  "theme": "town",
+  "source": "forest_trees",
+  "tris": 40
+ },
+ "forest_trees_12": {
+  "size": [
+   1.73,
+   0.73,
+   0.73
+  ],
+  "theme": "town",
+  "source": "forest_trees",
+  "tris": 6
+ },
+ "forest_trees_13": {
+  "size": [
+   1.04,
+   0.85,
+   0.92
+  ],
+  "theme": "town",
+  "source": "forest_trees",
+  "tris": 67
+ },
+ "forest_trees_14": {
+  "size": [
+   1.06,
+   0.74,
+   0.88
+  ],
+  "theme": "town",
+  "source": "forest_trees",
+  "tris": 92
+ },
+ "vegetation": {
+  "size": [
+   4.49,
+   3.0,
+   5.44
+  ],
+  "theme": "common",
+  "source": "vegetation",
+  "tris": 1489
+ },
+ "oak": {
+  "size": [
+   14.37,
+   12.0,
+   14.38
+  ],
+  "theme": "town",
+  "source": "oak",
+  "tris": 3499
+ },
+ "street_lamp": {
+  "size": [
+   0.87,
+   6.0,
+   0.4
+  ],
+  "theme": "common",
+  "source": "street_lamp",
+  "tris": 899
+ },
+ "stadium_seats": {
+  "size": [
+   4.46,
+   6.0,
+   19.06
+  ],
+  "theme": "common",
+  "source": "stadium_seats",
+  "tris": null
+ },
+ "starting_line": {
+  "size": [
+   20.95,
+   9.0,
+   1.22
+  ],
+  "theme": "common",
+  "source": "starting_line",
+  "tris": 2999
+ },
+ "road_billboard": {
+  "size": [
+   1.26,
+   7.0,
+   11.0
+  ],
+  "theme": "common",
+  "source": "road_billboard",
+  "tris": null
+ },
+ "barrier_concrete": {
+  "size": [
+   0.6,
+   0.81,
+   3.0
+  ],
+  "theme": "common",
+  "source": "modelled"
+ },
+ "barrier_red": {
+  "size": [
+   0.6,
+   0.81,
+   3.0
+  ],
+  "theme": "common",
+  "source": "modelled"
+ },
+ "barrier_white": {
+  "size": [
+   0.6,
+   0.81,
+   3.0
+  ],
+  "theme": "common",
+  "source": "modelled"
+ },
+ "tyre_stack": {
+  "size": [
+   0.86,
+   1.0,
+   0.86
+  ],
+  "theme": "common",
+  "source": "modelled"
+ }
+}
