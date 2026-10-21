@@ -3,7 +3,7 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import { Track } from './track.js';
 import { MAPS } from './maps.js';
 import { Vehicle } from './vehicle.js';
-import { Racer, AIDriver, LAPS } from './race.js';
+import { Racer, AIDriver, LAPS, setLaps } from './race.js';
 import { PowerUps, ITEMS } from './powerups.js';
 import { Skills, CHARGE } from './skills.js';
 import { Particles } from './effects.js';
@@ -33,11 +33,13 @@ const COUNTDOWN = 3;
 const OPPONENTS = 5;
 
 export class Race {
-  constructor({ renderer, sound, profile, hud, toast }) {
+  constructor({ renderer, sound, profile, hud, toast, event = null, onFinish = null }) {
     this.renderer = renderer;
     this.sound = sound;
     this.profile = profile;
-    this.map = MAPS[profile.map] || MAPS.beach;
+    this.event = event; // career event, or null for a quick race
+    this.onFinish = onFinish;
+    this.map = MAPS[event?.map || profile.map] || MAPS.beach;
     this.hud = hud;
     this.toast = toast;
     this.clock = 0;
@@ -50,7 +52,11 @@ export class Race {
   async load(progress = () => {}) {
     const map = this.map;
     const playerDriver = DRIVERS.find((d) => d.id === this.profile.driver) || DRIVERS[0];
-    const rivals = DRIVERS.filter((d) => d !== playerDriver).sort(() => Math.random() - 0.5).slice(0, OPPONENTS);
+    const ev = this.event;
+    setLaps(ev?.laps ?? 3);
+    let rivals = DRIVERS.filter((d) => d !== playerDriver && d.id !== ev?.driver).sort(() => Math.random() - 0.5).slice(0, OPPONENTS);
+    if (ev?.mode === 'timetrial') rivals = [];
+    if (ev?.mode === 'boss') rivals = [DRIVERS.find((d) => d.id === ev.driver)];
     this.roster = [playerDriver, ...rivals];
     await Promise.all(map.themes.map(loadTheme));
     progress(0.5);
@@ -80,6 +86,8 @@ export class Race {
     this.powerups = new PowerUps(scene, this.track, this.racers, this.sparks, (e) => this.onItemEvent(e));
     this.skills = new Skills({ scene, track: this.track, racers: this.racers, powerups: this.powerups, onEvent: (e) => this.onItemEvent(e) });
     this.startRace();
+    // Time-trial target: a clean lap at ~78% of the car's top speed, scaled by the event's par.
+    this.parTime = (this.track.length * LAPS) / (CARS[this.profile.car].topSpeed * 0.78) * (this.event?.par ?? 1) + 2;
     progress(1);
   }
 
@@ -155,10 +163,11 @@ export class Race {
     const carIds = Object.keys(CARS);
     this.racers = this.roster.map((driver, i) => {
       const isPlayer = i === 0;
+      const boss = !isPlayer && this.event?.mode === 'boss';
       const cfg = isPlayer
         ? { ...p, look: driverLook(p), detailed: true }
         : {
-            car: pick(carIds),
+            car: boss ? this.event.car : pick(carIds),
             paint: Math.random() < 0.5 ? undefined : pick(PAINTS),
             finish: pick(['gloss', 'metallic', 'metallic', 'pearl', 'matte']),
             rims: pick(Object.keys(RIMS)),
@@ -176,8 +185,10 @@ export class Race {
       racer.color = cfg.paint ?? CARS[cfg.car].paint;
       racer.flame = new THREE.Color(cfg.flame || 0xff8a1a);
       racer.takedowns = 0;
-      racer.aiSkill = isPlayer ? 0.97 : 0.9 + Math.random() * 0.09;
-      racer.ai = new AIDriver(car, { skill: racer.aiSkill, lane: ((i % 3) - 1) * 3, phase: i * 1.7, aggression: 0.3 + Math.random() * 0.7 });
+      const base = this.event?.ai ?? 0.945;
+      racer.aiSkill = isPlayer ? 0.97 : boss ? base : base + (Math.random() - 0.5) * 0.06;
+      racer.ai = new AIDriver(car, { skill: racer.aiSkill, lane: ((i % 3) - 1) * 3, phase: i * 1.7, aggression: boss ? 1 : 0.3 + Math.random() * 0.7 });
+      if (boss) racer.name = `${driver.name} · ${this.event.title}`;
       return racer;
     });
     this.player = this.racers[0];
@@ -422,7 +433,9 @@ export class Race {
       if (this.countdown <= 0) {
         this.state = 'racing';
         this.raceStart = this.clock;
-        this.toast('GO!', 1);
+        const ev = this.event;
+        const goal = !ev ? 'GO!' : ev.mode === 'boss' ? `BEAT ${ev.title.toUpperCase()}!` : ev.mode === 'takedowns' ? `GO! WRECK ${ev.target.join(' / ')} RIVALS` : ev.mode === 'timetrial' ? `GO! TARGET ${fmt(this.parTime)}` : 'GO! FINISH TOP 3';
+        this.toast(goal, 2);
         this.sound.play('go');
       } else if (Math.ceil(this.countdown) !== before) {
         this.sound.play('beep');
@@ -483,6 +496,8 @@ export class Race {
           this.toast(`${ordinal(place)} PLACE!`, 3);
           this.sound.play('finish');
           this.finishTimer = 2.2;
+          this.result = { place, takedowns: r.takedowns, time: this.clock - this.raceStart, parTime: this.parTime };
+          this.onFinish?.(this.result);
         }
       } else if (!r.car.wrecked) {
         const lost = r.car.speed < 2 || this.track.nearest(r.car.pos.x, r.car.pos.z, r.car.trackIndex).dist > 30;
@@ -770,12 +785,15 @@ export class Race {
     const p = this.player;
     const car = this.car;
     h.speed.textContent = Math.round(car.speed * 3.6);
+    if (h.speedFill) h.speedFill.style.width = `${Math.min(100, (car.speed / (car.topSpeed + 14)) * 100)}%`;
     h.lap.textContent = `${clamp(p.lap, 1, LAPS)}/${LAPS}`;
     h.time.textContent = fmt(p.finished || p.lap === 0 ? 0 : this.clock - p.lapStart);
     h.best.textContent = p.best < Infinity ? fmt(p.best) : '--';
     h.takedowns.textContent = p.takedowns;
-    h.pos.textContent = ordinal(this.standings.indexOf(p) + 1);
-    h.posOf.textContent = `/${this.racers.length}`;
+    const place = this.standings.indexOf(p) + 1;
+    h.pos.textContent = place;
+    if (h.posSuffix) h.posSuffix.textContent = ordinal(place).slice(String(place).length).toUpperCase();
+    h.posOf.textContent = `/ ${this.racers.length}`;
 
     const tier = car.driftTier;
     h.drift.classList.toggle('on', tier >= 0);
@@ -810,6 +828,9 @@ export class Race {
     h.countdown.textContent = this.state === 'countdown' && n <= COUNTDOWN ? n : '';
 
     if (this.state === 'finished') {
+      const pl = this.standings.indexOf(this.player) + 1;
+      h.resultsTitle.textContent = this.player.finished ? `${ordinal(pl).toUpperCase()} PLACE` : 'RESULTS';
+      h.resultsEvent.textContent = this.event ? `${this.event.name} · ${this.map.name}` : `Quick race · ${this.map.name}`;
       h.resultsList.innerHTML = this.standings
         .map((r, i) => {
           const time = r.finished ? fmt(r.finishTime - this.raceStart) : 'racing…';

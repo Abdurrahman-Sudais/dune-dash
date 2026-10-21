@@ -1,4 +1,7 @@
-export const LAPS = 3;
+export let LAPS = 3;
+export function setLaps(n) {
+  LAPS = n;
+}
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const wrapAngle = (a) => Math.atan2(Math.sin(a), Math.cos(a));

@@ -59,7 +59,7 @@ export class Garage {
   }
 
   show(profile) {
-    const look = { ...driverLook(profile), helmet: false };
+    const look = { ...driverLook(profile), helmet: !!profile.helmet };
     const carKey = JSON.stringify({ ...profile, look: null, driver: null, helmet: null, map: null });
     const lookKey = JSON.stringify(look);
     if (carKey !== this.carKey) {

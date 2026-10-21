@@ -51,18 +51,18 @@ export const HAIR_COLORS = [0x2b1a10, 0x6b3e1f, 0xc8963e, 0xe8d39a, 0x8a1c1c, 0x
 
 // Driver identity = name + skill + default look. The player can restyle any of them.
 export const DRIVERS = [
-  { id: 'rex', name: 'Rex', skill: 'nitro', look: { body: 'male', skin: 'light', hair: 'Hair_SimpleParted', beard: true, hairColor: 0x2b1a10, suit: 0xd81e1e, accent: 0x111111 } },
-  { id: 'coco', name: 'Coco', skill: 'ghost', look: { body: 'female', skin: 'dark', hair: 'Hair_Buns', beard: false, hairColor: 0x1a1a1a, suit: 0xf4f4f4, accent: 0x7f5af0 } },
-  { id: 'blu', name: 'Blu', skill: 'shockwave', look: { body: 'male', skin: 'dark', hair: 'Hair_Buzzed', beard: false, hairColor: 0x1a1a1a, suit: 0x2a6ff7, accent: 0xffffff } },
-  { id: 'sunny', name: 'Sunny', skill: 'thunder', look: { body: 'female', skin: 'light', hair: 'Hair_Long', beard: false, hairColor: 0xe8d39a, suit: 0xffd23f, accent: 0x111111 } },
-  { id: 'mango', name: 'Mango', skill: 'mines', look: { body: 'male', skin: 'light', hair: 'Hair_Long', beard: true, hairColor: 0x6b3e1f, suit: 0xff7a1a, accent: 0x1f8f5f } },
-  { id: 'kiki', name: 'Kiki', skill: 'barrage', look: { body: 'female', skin: 'light', hair: 'Hair_BuzzedFemale', beard: false, hairColor: 0x8a1c1c, suit: 0x111111, accent: 0xff2bd6 } },
-  { id: 'duke', name: 'Duke', skill: 'monster', look: { body: 'male', skin: 'dark', hair: 'none', beard: true, hairColor: 0x1a1a1a, suit: 0x3a3a3a, accent: 0xffd23f } },
-  { id: 'lola', name: 'Lola', skill: 'tractor', look: { body: 'female', skin: 'dark', hair: 'Hair_Long', beard: false, hairColor: 0x2b1a10, suit: 0xff2bd6, accent: 0xffffff } },
-  { id: 'taz', name: 'Taz', skill: 'barrage', look: { body: 'male', skin: 'light', hair: 'Hair_Buzzed', beard: false, hairColor: 0xc8963e, suit: 0x1f8f5f, accent: 0xffffff } },
-  { id: 'nova', name: 'Nova', skill: 'nitro', look: { body: 'female', skin: 'light', hair: 'Hair_Buns', beard: false, hairColor: 0xd9d9d9, suit: 0x00b4ff, accent: 0x111111 } },
-  { id: 'bruno', name: 'Bruno', skill: 'monster', look: { body: 'male', skin: 'light', hair: 'none', beard: true, hairColor: 0x6b3e1f, suit: 0x8a5a33, accent: 0xff7a1a } },
-  { id: 'ivy', name: 'Ivy', skill: 'shockwave', look: { body: 'female', skin: 'dark', hair: 'Hair_BuzzedFemale', beard: false, hairColor: 0x1a1a1a, suit: 0x2ecc71, accent: 0x111111 } },
+  { id: 'rex', name: 'Rex', skill: 'nitro', look: { body: 'male', skin: 'light', hair: 'Hair_SimpleParted', beard: true, hairColor: 0x2b1a10, suit: 0xd81e1e, accent: 0x111111, pattern: 'flames', number: 1, name: 'Rex', helmetColor: 0xffd23f } },
+  { id: 'coco', name: 'Coco', skill: 'ghost', look: { body: 'female', skin: 'dark', hair: 'Hair_Buns', beard: false, hairColor: 0x1a1a1a, suit: 0xf4f4f4, accent: 0x7f5af0, pattern: 'chevron', number: 8, name: 'Coco', helmetColor: 0x7f5af0 } },
+  { id: 'blu', name: 'Blu', skill: 'shockwave', look: { body: 'male', skin: 'dark', hair: 'Hair_Buzzed', beard: false, hairColor: 0x1a1a1a, suit: 0x2a6ff7, accent: 0xffffff, pattern: 'split', number: 22, name: 'Blu', helmetColor: 0xffffff } },
+  { id: 'sunny', name: 'Sunny', skill: 'thunder', look: { body: 'female', skin: 'light', hair: 'Hair_Long', beard: false, hairColor: 0xe8d39a, suit: 0xffd23f, accent: 0x111111, pattern: 'checker', number: 5, name: 'Sunny', helmetColor: 0x111111 } },
+  { id: 'mango', name: 'Mango', skill: 'mines', look: { body: 'male', skin: 'light', hair: 'Hair_Long', beard: true, hairColor: 0x6b3e1f, suit: 0xff7a1a, accent: 0x1f8f5f, pattern: 'camo', number: 44, name: 'Mango', helmetColor: 0x1f8f5f } },
+  { id: 'kiki', name: 'Kiki', skill: 'barrage', look: { body: 'female', skin: 'light', hair: 'Hair_BuzzedFemale', beard: false, hairColor: 0x8a1c1c, suit: 0x111111, accent: 0xff2bd6, pattern: 'chevron', number: 13, name: 'Kiki', helmetColor: 0xff2bd6 } },
+  { id: 'duke', name: 'Duke', skill: 'monster', look: { body: 'male', skin: 'dark', hair: 'none', beard: true, hairColor: 0x1a1a1a, suit: 0x3a3a3a, accent: 0xffd23f, pattern: 'stripes', number: 99, name: 'Duke', helmetColor: 0xffd23f } },
+  { id: 'lola', name: 'Lola', skill: 'tractor', look: { body: 'female', skin: 'dark', hair: 'Hair_Long', beard: false, hairColor: 0x2b1a10, suit: 0xff2bd6, accent: 0xffffff, pattern: 'split', number: 27, name: 'Lola', helmetColor: 0xffffff } },
+  { id: 'taz', name: 'Taz', skill: 'barrage', look: { body: 'male', skin: 'light', hair: 'Hair_Buzzed', beard: false, hairColor: 0xc8963e, suit: 0x1f8f5f, accent: 0xffffff, pattern: 'checker', number: 3, name: 'Taz', helmetColor: 0x1f8f5f } },
+  { id: 'nova', name: 'Nova', skill: 'nitro', look: { body: 'female', skin: 'light', hair: 'Hair_Buns', beard: false, hairColor: 0xd9d9d9, suit: 0x00b4ff, accent: 0x111111, pattern: 'flames', number: 11, name: 'Nova', helmetColor: 0x00b4ff } },
+  { id: 'bruno', name: 'Bruno', skill: 'monster', look: { body: 'male', skin: 'light', hair: 'none', beard: true, hairColor: 0x6b3e1f, suit: 0x8a5a33, accent: 0xff7a1a, pattern: 'camo', number: 66, name: 'Bruno', helmetColor: 0x8a5a33 } },
+  { id: 'ivy', name: 'Ivy', skill: 'shockwave', look: { body: 'female', skin: 'dark', hair: 'Hair_BuzzedFemale', beard: false, hairColor: 0x1a1a1a, suit: 0x2ecc71, accent: 0x111111, pattern: 'stripes', number: 17, name: 'Ivy', helmetColor: 0x2ecc71 } },
 ];
 
 export const PAINTS = [
