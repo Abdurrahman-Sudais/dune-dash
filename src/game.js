@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { Track } from './track.js';
+import { PostFX } from './postfx.js';
 import { MAPS } from './maps.js';
 import { Vehicle } from './vehicle.js';
 import { Racer, AIDriver, LAPS, setLaps } from './race.js';
@@ -31,6 +31,7 @@ const hex = (c) => `#${c.toString(16).padStart(6, '0')}`;
 const IDLE = { throttle: false, brake: false, steer: 0, drift: false };
 const COUNTDOWN = 3;
 const OPPONENTS = 5;
+const FORCE_HQ = new URLSearchParams(location.search).has('hq'); // ?hq keeps full quality even when slow
 
 export class Race {
   constructor({ renderer, sound, profile, hud, toast, event = null, onFinish = null }) {
@@ -63,17 +64,17 @@ export class Race {
 
     const scene = (this.scene = new THREE.Scene());
     this.buildSky();
-    const pmrem = new THREE.PMREMGenerator(this.renderer);
-    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-    scene.environmentIntensity = 0.45;
-    pmrem.dispose();
+    scene.environment = this.skyEnvironment();
+    scene.environmentIntensity = 0.75;
 
     this.track = new Track(scene, map);
     map.decorate(this.track);
     this.track.finalize();
+    this.sharpenTextures();
     progress(0.8);
 
     this.camera = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, 0.3, map.sky.fogFar + 150);
+    this.post = new PostFX(this.renderer, scene, this.camera);
     this.dust = new Particles(scene, { max: 900, size: 2.2, opacity: 0.5 });
     this.sparks = new Particles(scene, { max: 900, size: 0.5, additive: true });
     this.smoke = new Particles(scene, { max: 300, size: 4, opacity: 0.35 });
@@ -97,49 +98,24 @@ export class Race {
     const horizon = new THREE.Color(m.sky.bottom);
     scene.background = horizon;
     scene.fog = new THREE.Fog(m.sky.fog, m.sky.fogNear, m.sky.fogFar);
-    this.sky = new THREE.Mesh(
-      new THREE.SphereGeometry(m.sky.fogFar + 50, 32, 16),
-      new THREE.ShaderMaterial({
-        side: THREE.BackSide,
-        depthWrite: false,
-        fog: false,
-        toneMapped: false,
-        uniforms: { top: { value: new THREE.Color(m.sky.top) }, bottom: { value: horizon }, sunDir: { value: new THREE.Vector3(...m.sun.dir).normalize() } },
-        vertexShader: /* glsl */ `
-          varying vec3 vDir;
-          void main() {
-            vDir = normalize(position);
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-          }`,
-        fragmentShader: /* glsl */ `
-          uniform vec3 top;
-          uniform vec3 bottom;
-          uniform vec3 sunDir;
-          varying vec3 vDir;
-          void main() {
-            float h = pow(max(vDir.y, 0.0), 0.55);
-            vec3 col = mix(bottom, top, h);
-            float sun = max(dot(normalize(vDir), sunDir), 0.0);
-            col += vec3(1.0, 0.85, 0.6) * (pow(sun, 400.0) * 2.0 + pow(sun, 12.0) * 0.25);
-            gl_FragColor = vec4(col, 1.0);
-          }`,
-      })
-    );
+    this.sky = new THREE.Mesh(new THREE.SphereGeometry(m.sky.fogFar + 50, 48, 24), this.skyMaterial());
     scene.add(this.sky);
 
     scene.add(new THREE.HemisphereLight(m.hemi.sky, m.hemi.ground, m.hemi.intensity));
     const sun = (this.sun = new THREE.DirectionalLight(m.sun.color, m.sun.intensity));
     sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
-    Object.assign(sun.shadow.camera, { left: -80, right: 80, top: 80, bottom: -80, near: 1, far: 400 });
-    sun.shadow.bias = -0.0004;
-    sun.shadow.normalBias = 0.04;
+    // Crisp shadows: a big map over a tight box that follows the player.
+    sun.shadow.mapSize.set(4096, 4096);
+    Object.assign(sun.shadow.camera, { left: -70, right: 70, top: 70, bottom: -70, near: 1, far: 400 });
+    sun.shadow.bias = -0.0003;
+    sun.shadow.normalBias = 0.035;
+    sun.shadow.radius = 3;
     scene.add(sun, sun.target);
     this.sunOffset = new THREE.Vector3(...m.sun.dir).normalize().multiplyScalar(160);
 
     // Low-poly clouds drifting overhead.
     this.clouds = new THREE.Group();
-    const cloudMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1, flatShading: true, fog: false, emissive: 0xffffff, emissiveIntensity: 0.25 });
+    const cloudMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1, flatShading: true, fog: false, emissive: 0xffffff, emissiveIntensity: 0.5 });
     const puff = new THREE.IcosahedronGeometry(1, 1);
     for (let i = 0; i < 18; i++) {
       const cloud = new THREE.Group();
@@ -156,6 +132,75 @@ export class Race {
       this.clouds.add(cloud);
     }
     scene.add(this.clouds);
+  }
+
+  // Gradient sky with a deep zenith, a hazy horizon band and an HDR sun that blooms.
+  skyMaterial() {
+    const m = this.map;
+    return new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      depthWrite: false,
+      fog: false,
+      uniforms: {
+        top: { value: new THREE.Color(m.sky.top) },
+        bottom: { value: new THREE.Color(m.sky.bottom) },
+        haze: { value: new THREE.Color(m.sky.fog) },
+        sunDir: { value: new THREE.Vector3(...m.sun.dir).normalize() },
+        sunColor: { value: new THREE.Color(m.sun.color) },
+      },
+      vertexShader: /* glsl */ `
+        varying vec3 vDir;
+        void main() {
+          vDir = normalize(position);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }`,
+      fragmentShader: /* glsl */ `
+        uniform vec3 top, bottom, haze, sunDir, sunColor;
+        varying vec3 vDir;
+        void main() {
+          vec3 d = normalize(vDir);
+          float h = max(d.y, 0.0);
+          vec3 zenith = top * 0.78;
+          vec3 col = mix(bottom, top, pow(h, 0.45));
+          col = mix(col, zenith, smoothstep(0.35, 1.0, h));
+          col = mix(col, haze, exp(-h * 16.0) * 0.85);
+          if (d.y < 0.0) col = haze;
+          float s = max(dot(d, sunDir), 0.0);
+          col += sunColor * (smoothstep(0.9993, 0.9997, s) * 30.0 + pow(s, 600.0) * 4.0 + pow(s, 24.0) * 0.35 + pow(s, 4.0) * 0.08);
+          gl_FragColor = vec4(col, 1.0);
+          #include <colorspace_fragment>
+        }`,
+    });
+  }
+
+  // Image-based lighting from this map's own sky (blue above, sand bounce below), so paint and
+  // chrome reflect the world they drive in instead of a studio.
+  skyEnvironment() {
+    const env = new THREE.Scene();
+    const mat = this.skyMaterial();
+    mat.uniforms.sunColor.value.multiplyScalar(0.25);
+    env.add(new THREE.Mesh(new THREE.SphereGeometry(50, 48, 24), mat));
+    const ground = new THREE.Mesh(
+      new THREE.CircleGeometry(48, 48).rotateX(-Math.PI / 2),
+      new THREE.MeshBasicMaterial({ color: new THREE.Color(this.map.hemi.ground).multiplyScalar(0.6) })
+    );
+    ground.position.y = -2;
+    env.add(ground);
+    const pmrem = new THREE.PMREMGenerator(this.renderer);
+    const tex = pmrem.fromScene(env, 0.02).texture;
+    pmrem.dispose();
+    return tex;
+  }
+
+  // Max anisotropic filtering on every texture, so roads and ground stay sharp at grazing angles.
+  sharpenTextures() {
+    const aniso = this.renderer.capabilities.getMaxAnisotropy();
+    this.scene.traverse((o) => {
+      if (!o.material) return;
+      for (const mat of [].concat(o.material))
+        for (const key of ['map', 'normalMap', 'bumpMap', 'roughnessMap'])
+          if (mat[key]) mat[key].anisotropy = aniso;
+    });
   }
 
   buildRacers() {
@@ -719,29 +764,43 @@ export class Race {
 
   // --- Frame ---------------------------------------------------------------------------------------
   // Auto quality: if the first seconds of racing run slow, drop to cheaper shadows and resolution.
+  // Two steps: first drop resolution, MSAA and shadow size; if it's still slow, drop bloom and shorten the view.
   adaptQuality(realDt) {
-    if (this.qualityChecked || this.state !== 'racing') return;
+    if ((this.qualityStep ?? 0) >= 2 || this.state !== 'racing' || FORCE_HQ) return;
     this.fpsSamples = (this.fpsSamples || 0) + 1;
     this.fpsTime = (this.fpsTime || 0) + realDt;
     if (this.fpsTime < 3) return;
-    this.qualityChecked = true;
     const fps = this.fpsSamples / this.fpsTime;
-    if (fps < 45) {
+    this.fpsSamples = this.fpsTime = 0;
+    if (fps >= 45) {
+      this.qualityStep = 2; // fast enough: stop checking
+      return;
+    }
+    this.qualityStep = (this.qualityStep ?? 0) + 1;
+    if (this.qualityStep === 1) {
       this.renderer.setPixelRatio(1);
+      this.post.lowQuality();
       this.renderer.shadowMap.type = THREE.PCFShadowMap;
-      this.sun.shadow.mapSize.set(1024, 1024);
-      this.sun.shadow.map?.dispose();
-      this.sun.shadow.map = null;
+      this.setShadowSize(2048);
+    } else {
+      this.post.bloom.enabled = false;
+      this.setShadowSize(1024);
       this.scene.fog.far *= 0.8;
       this.camera.far = this.scene.fog.far + 150;
-      this.lowQuality = true;
     }
+    this.lowQuality = true;
+  }
+
+  setShadowSize(n) {
+    this.sun.shadow.mapSize.set(n, n);
+    this.sun.shadow.map?.dispose();
+    this.sun.shadow.map = null;
   }
 
   frame(realDt, input) {
     this.adaptQuality(realDt);
     if (this.paused) {
-      this.renderer.render(this.scene, this.camera);
+      this.post.render(realDt);
       return;
     }
     if (this.slowmo > 0) {
@@ -777,7 +836,7 @@ export class Race {
     this.sun.target.position.copy(focus);
     this.sound.update(this.car, this.player.finished ? this.car.speed > 5 : input.throttle, this.state !== 'countdown');
     this.updateHud(realDt);
-    this.renderer.render(this.scene, this.camera);
+    this.post.render(realDt);
   }
 
   updateHud(dt) {
@@ -877,9 +936,11 @@ export class Race {
   resize() {
     this.camera.aspect = innerWidth / innerHeight;
     this.camera.updateProjectionMatrix();
+    this.post.setSize(innerWidth, innerHeight);
   }
 
   dispose() {
+    this.post?.dispose();
     this.powerups.dispose();
     for (const c of this.cars) c.dispose();
     this.track.dispose();

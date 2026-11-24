@@ -17,6 +17,59 @@ export function smoothstep(a, b, x) {
   return t * t * (3 - 2 * t);
 }
 
+// Tiling detail for the terrain: a near-white grain map (multiplies the vertex colours) and a
+// bump map with wind ripples for sand, or cracked strata for rock.
+function groundDetailTexture(kind) {
+  const S = 512;
+  const make = () => {
+    const c = document.createElement('canvas');
+    c.width = c.height = S;
+    return [c, c.getContext('2d')];
+  };
+  const [mc, m] = make();
+  m.fillStyle = '#f2f2f2';
+  m.fillRect(0, 0, S, S);
+  for (let i = 0; i < 26000; i++) {
+    const v = Math.random() < 0.5 ? 200 + Math.random() * 30 : 250 + Math.random() * 5;
+    m.fillStyle = `rgba(${v},${v},${v},0.55)`;
+    const s = 1 + Math.random() * 2;
+    // Wrap so the tile has no seams.
+    const x = Math.random() * S, y = Math.random() * S;
+    for (const [ox, oy] of [[0, 0], [-S, 0], [0, -S], [-S, -S]]) m.fillRect(x + ox, y + oy, s, s);
+  }
+  const [bc, b] = make();
+  const img = b.createImageData(S, S);
+  for (let y = 0; y < S; y++)
+    for (let x = 0; x < S; x++) {
+      const u = (x / S) * Math.PI * 2, v = (y / S) * Math.PI * 2;
+      let h;
+      if (kind === 'sand') {
+        // Wavy ripples: periodic in both directions so they tile.
+        const warp = Math.sin(u * 2 + Math.sin(v * 3) * 0.8) * 0.9 + Math.sin(u * 5) * 0.25;
+        h = Math.sin(v * 9 + warp) * 0.5 + 0.5;
+        h = Math.pow(h, 1.6);
+      } else if (kind === 'grass') {
+        // Soft tufts: tileable blotches, no stripes.
+        h = (Math.sin(u * 7 + Math.sin(v * 5) * 2) * Math.sin(v * 8 + Math.sin(u * 4) * 2)) * 0.25 + 0.5;
+      } else {
+        h = Math.abs(Math.sin(v * 6 + Math.sin(u * 3) * 0.6)) * 0.6 + Math.abs(Math.sin(u * 11 + v * 4)) * 0.2;
+      }
+      h = h * 0.8 + Math.random() * 0.2;
+      const i = (y * S + x) * 4;
+      img.data[i] = img.data[i + 1] = img.data[i + 2] = h * 255;
+      img.data[i + 3] = 255;
+    }
+  b.putImageData(img, 0, 0);
+  const wrap = (c) => {
+    const t = new THREE.CanvasTexture(c);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.colorSpace = THREE.NoColorSpace;
+    t.anisotropy = 16;
+    return t;
+  };
+  return { map: wrap(mc), bump: wrap(bc) };
+}
+
 const CELL = 32;
 const CHUNK = 140;
 const cellKey = (x, z) => `${Math.floor(x / CELL)},${Math.floor(z / CELL)}`;
@@ -289,76 +342,181 @@ export class Track {
   buildGround() {
     const m = this.map;
     const size = m.groundSize;
-    const segs = 170;
+    const segs = 256;
     const geo = new THREE.PlaneGeometry(size, size, segs, segs).rotateX(-Math.PI / 2);
     const pos = geo.attributes.position;
     const colors = new Float32Array(pos.count * 3);
+    const heights = new Float32Array(pos.count);
     const c = new THREE.Color();
     for (let i = 0; i < pos.count; i++) {
       const x = pos.getX(i);
       const z = pos.getZ(i);
       const q = this.nearest(x, z);
       const h = this.surface(x, z, q);
-      pos.setY(i, q.dist < this.halfWidth + 1.4 ? q.y - 0.35 : h);
+      const y = q.dist < this.halfWidth + 1.4 ? q.y - 0.35 : h;
+      pos.setY(i, y);
+      heights[i] = y;
       m.groundColor(c, x, z, h, q.dist, this.halfWidth);
       colors.set([c.r, c.g, c.b], i * 3);
     }
+    this.groundGrid = { heights, segs, size }; // rows run along +z, columns along +x
     geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
     geo.computeVertexNormals();
-    const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, flatShading: !!m.flatGround }));
+    // A fine tiling grain on top of the vertex colours, and wind ripples on sand maps.
+    const kind = m.groundDetail ?? (m.flatGround ? 'rock' : 'sand');
+    const detail = groundDetailTexture(kind);
+    const repeat = size / (kind === 'sand' ? 9 : 14);
+    detail.map.repeat.set(repeat, repeat);
+    detail.bump.repeat.set(repeat, repeat);
+    const mesh = new THREE.Mesh(
+      geo,
+      new THREE.MeshStandardMaterial({ vertexColors: true, map: detail.map, bumpMap: detail.bump, bumpScale: { sand: 1.5, rock: 1.2, grass: 0.8 }[kind], roughness: 0.95, flatShading: !!m.flatGround })
+    );
     mesh.receiveShadow = true;
     this.group.add(mesh);
   }
 
+  // Tropical water: turquoise over the shallows, deep blue offshore, foam where it meets the sand,
+  // animated waves with sky reflections and sun glints. Depth comes from the ground heights.
   buildWater() {
-    const c = document.createElement('canvas');
-    c.width = c.height = 128;
-    const g = c.getContext('2d');
-    g.fillStyle = '#ffffff';
-    g.fillRect(0, 0, 128, 128);
-    for (let i = 0; i < 260; i++) {
-      g.fillStyle = `rgba(160,220,235,${0.25 + Math.random() * 0.35})`;
-      g.fillRect(Math.random() * 128, Math.random() * 128, 2 + Math.random() * 10, 1.5);
-    }
-    const tex = new THREE.CanvasTexture(c);
-    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-    tex.repeat.set(160, 160);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    this.waterTex = tex;
-    const water = new THREE.Mesh(
-      new THREE.PlaneGeometry(6000, 6000).rotateX(-Math.PI / 2),
-      new THREE.MeshStandardMaterial({ color: this.map.water.color, map: tex, roughness: 0.12, metalness: 0.15, transparent: true, opacity: 0.9 })
-    );
-    water.position.y = this.map.water.level;
+    const { heights, segs, size } = this.groundGrid;
+    const level = this.map.water.level;
+    const n = segs + 1;
+    const data = new Uint8Array(n * n * 4);
+    for (let i = 0; i < n * n; i++) data[i * 4] = Math.round(Math.min(1, Math.max(0, (level - heights[i]) / 5)) * 255);
+    const depth = new THREE.DataTexture(data, n, n);
+    depth.magFilter = depth.minFilter = THREE.LinearFilter;
+    depth.needsUpdate = true;
+
+    const base = new THREE.Color(this.map.water.color);
+    const uniforms = THREE.UniformsUtils.merge([THREE.UniformsLib.fog, {
+      time: { value: 0 },
+      depthMap: { value: null },
+      groundSize: { value: size },
+      shallow: { value: new THREE.Color(this.map.water.shallow ?? 0x46e6d6) },
+      deep: { value: base },
+      skyColor: { value: new THREE.Color(this.map.sky.top).lerp(new THREE.Color(this.map.sky.bottom), 0.45) },
+      sunDir: { value: new THREE.Vector3(...this.map.sun.dir).normalize() },
+      sunColor: { value: new THREE.Color(this.map.sun.color) },
+    }]);
+    uniforms.depthMap.value = depth;
+    const mat = new THREE.ShaderMaterial({
+      uniforms,
+      fog: true,
+      transparent: true,
+      depthWrite: false,
+      vertexShader: /* glsl */ `
+        #include <fog_pars_vertex>
+        varying vec3 vWorld;
+        void main() {
+          vec4 wp = modelMatrix * vec4(position, 1.0);
+          vWorld = wp.xyz;
+          vec4 mvPosition = viewMatrix * wp;
+          gl_Position = projectionMatrix * mvPosition;
+          #include <fog_vertex>
+        }`,
+      fragmentShader: /* glsl */ `
+        #include <fog_pars_fragment>
+        uniform float time, groundSize;
+        uniform sampler2D depthMap;
+        uniform vec3 shallow, deep, skyColor, sunDir, sunColor;
+        varying vec3 vWorld;
+        float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+        float noise(vec2 p) {
+          vec2 i = floor(p), f = fract(p);
+          f = f * f * (3.0 - 2.0 * f);
+          return mix(mix(hash(i), hash(i + vec2(1, 0)), f.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), f.x), f.y);
+        }
+        float waves(vec2 p) {
+          float h = noise(p * 0.11 + vec2(time * 0.12, time * 0.07)) * 0.6;
+          h += noise(p * 0.27 - vec2(time * 0.18, -time * 0.1)) * 0.3;
+          h += noise(p * 0.7 + vec2(time * 0.33, time * 0.21)) * 0.12;
+          return h;
+        }
+        void main() {
+          vec2 uv = vWorld.xz / groundSize + 0.5;
+          float d = (uv.x < 0.0 || uv.y < 0.0 || uv.x > 1.0 || uv.y > 1.0) ? 1.0 : texture2D(depthMap, uv).r;
+          float e = 0.6;
+          float h0 = waves(vWorld.xz);
+          vec3 nrm = normalize(vec3(h0 - waves(vWorld.xz + vec2(e, 0.0)), e * 1.4, h0 - waves(vWorld.xz + vec2(0.0, e))));
+          vec3 view = normalize(cameraPosition - vWorld);
+          float fres = pow(1.0 - max(dot(nrm, view), 0.0), 4.0);
+          vec3 col = mix(shallow, deep, smoothstep(0.0, 0.55, d));
+          col *= 0.9 + h0 * 0.25;
+          col = mix(col, skyColor, fres * 0.55);
+          float spec = pow(max(dot(reflect(-sunDir, nrm), view), 0.0), 220.0);
+          col += sunColor * spec * 6.0;
+          // Shore foam: a lapping band plus broken streaks just offshore.
+          float lap = sin(d * 90.0 - time * 2.2) * 0.5 + 0.5;
+          float foam = smoothstep(0.07, 0.0, d) + smoothstep(0.16, 0.04, d) * step(0.72, lap) * 0.7;
+          foam *= smoothstep(0.25, 0.6, noise(vWorld.xz * 0.6 + time * 0.3));
+          col = mix(col, vec3(1.0), clamp(foam, 0.0, 1.0) * 0.85);
+          float alpha = mix(0.55, 0.96, smoothstep(0.0, 0.25, d));
+          gl_FragColor = vec4(col, max(alpha, foam));
+          #include <colorspace_fragment>
+          #include <fog_fragment>
+        }`,
+    });
+    this.waterMat = mat;
+    const water = new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000).rotateX(-Math.PI / 2), mat);
+    water.position.y = level;
     this.group.add(water);
   }
 
   roadTexture() {
     const style = this.map.road;
+    const S = 1024;
+    const k = S / 256; // the layout below was drawn on a 256 grid
     const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 256;
+    canvas.width = canvas.height = S;
     const g = canvas.getContext('2d');
     g.fillStyle = style.base;
-    g.fillRect(0, 0, 256, 256);
-    for (let i = 0; i < 3000; i++) {
-      g.fillStyle = Math.random() < 0.5 ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.07)';
-      g.fillRect(Math.random() * 256, Math.random() * 256, 2, 2);
+    g.fillRect(0, 0, S, S);
+    // Large soft patches, then fine grit, so the surface reads at any distance.
+    for (let i = 0; i < 90; i++) {
+      const r = 20 + Math.random() * 90;
+      const x = Math.random() * S, y = Math.random() * S;
+      const grad = g.createRadialGradient(x, y, 0, x, y, r);
+      const dark = Math.random() < 0.5;
+      grad.addColorStop(0, dark ? 'rgba(0,0,0,0.07)' : 'rgba(255,255,255,0.06)');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      g.fillStyle = grad;
+      g.fillRect(x - r, y - r, r * 2, r * 2);
+    }
+    for (let i = 0; i < 60000; i++) {
+      g.fillStyle = Math.random() < 0.5 ? `rgba(0,0,0,${0.05 + Math.random() * 0.08})` : `rgba(255,255,255,${0.04 + Math.random() * 0.07})`;
+      const s = 1 + Math.random() * 2.5;
+      g.fillRect(Math.random() * S, Math.random() * S, s, s);
     }
     if (style.ruts) {
-      g.fillStyle = 'rgba(60,35,15,0.18)';
-      for (const x of [58, 80, 170, 192]) g.fillRect(x, 0, 9, 256);
+      for (const x of [58, 80, 170, 192]) {
+        const grad = g.createLinearGradient(x * k, 0, (x + 9) * k, 0);
+        grad.addColorStop(0, 'rgba(60,35,15,0)');
+        grad.addColorStop(0.5, 'rgba(60,35,15,0.26)');
+        grad.addColorStop(1, 'rgba(60,35,15,0)');
+        g.fillStyle = grad;
+        g.fillRect(x * k, 0, 9 * k, S);
+      }
+    }
+    // Darker, worn edges.
+    for (const [x0, x1] of [[0, 24], [S, S - 24]]) {
+      const grad = g.createLinearGradient(x0, 0, x1, 0);
+      grad.addColorStop(0, 'rgba(0,0,0,0.22)');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      g.fillStyle = grad;
+      g.fillRect(Math.min(x0, x1), 0, 24, S);
     }
     if (style.lines) {
-      g.fillStyle = 'rgba(255,255,255,0.9)';
-      g.fillRect(8, 0, 6, 256);
-      g.fillRect(242, 0, 6, 256);
+      g.fillStyle = 'rgba(255,255,255,0.92)';
+      g.fillRect(8 * k, 0, 6 * k, S);
+      g.fillRect(242 * k, 0, 6 * k, S);
       g.fillStyle = 'rgba(255,214,60,0.95)';
-      g.fillRect(125, 0, 6, 120);
+      g.fillRect(125 * k, 0, 6 * k, 120 * k);
     }
     const tex = new THREE.CanvasTexture(canvas);
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
     tex.colorSpace = THREE.SRGBColorSpace;
-    tex.anisotropy = 8;
+    tex.anisotropy = 16;
     return tex;
   }
 
@@ -626,7 +784,7 @@ export class Track {
       f.obj.rotation.z = Math.sin(time * 0.9 + f.phase) * 0.04;
       f.obj.rotation.x = Math.sin(time * 0.7 + f.phase * 2) * 0.03;
     }
-    if (this.waterTex) this.waterTex.offset.set(time * 0.004, time * 0.0025);
+    if (this.waterMat) this.waterMat.uniforms.time.value = time;
   }
 
   dispose() {

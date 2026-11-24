@@ -18,11 +18,14 @@ const hex = (c) => `#${c.toString(16).padStart(6, '0')}`;
 
 // --- Renderer ---------------------------------------------------------------------------
 const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+// Render at full display resolution (up to 2x on high-DPI screens); the race drops to 1x if it runs slow.
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
+// Neutral keeps the bright arcade colours saturated where ACES would wash them out.
+renderer.toneMapping = THREE.NeutralToneMapping;
+renderer.toneMappingExposure = 1.05;
 document.body.prepend(renderer.domElement);
 
 const sound = new Sound();
@@ -261,6 +264,7 @@ async function startRace(event = null) {
   if (race) race.dispose();
   $('results-extra').innerHTML = '';
   race = new Race({ renderer, sound, profile, hud, toast, event: currentEvent, onFinish });
+  if (import.meta.env.DEV) window.__race = race; // console access while developing
   await new Promise((r) => setTimeout(r, 30)); // let the loading screen paint
   await race.load((f) => setLoading(f));
   showScreen('hud');

@@ -140,21 +140,21 @@ export const MAPS = {
       [60, 7, 110], [20, 11, 140], [-50, 9, 135], [-100, 5, 100], [-90, 3, 40], [-130, 2, 0], [-120, 1, -70], [-70, 1, -110],
     ],
     jumps: [{ at: 0.86, height: 3.4, length: 22 }],
-    water: { level: -0.6, color: 0x1fb6cc },
-    road: { base: '#c99d66', ruts: true, curbs: [0xe8432f, 0xfff6e8] },
+    water: { level: -0.6, color: 0x0a78c8, shallow: 0x3fe8d8 },
+    road: { base: '#d2a870', ruts: true, curbs: [0xf0402a, 0xfff8ee] },
     island: 420,
     terrain(x, z) {
       const r = Math.hypot(x, z);
       return (noise2(x, z) + 2.6) * 1.1 - Math.max(0, r - this.island) * 0.05;
     },
     groundColor(c, x, z, h) {
-      c.setHex(0xf2d9a4).lerp({ r: 0.89, g: 0.75, b: 0.51 }, Math.min(1, Math.max(0, 0.5 - h * 0.08 + Math.sin(x * 0.3) * Math.sin(z * 0.27) * 0.15)));
-      if (h > 5.5) c.lerp({ r: 0.55, g: 0.68, b: 0.32 }, Math.min(0.5, (h - 5.5) * 0.15));
-      if (h < 0.4) c.lerp({ r: 0.72, g: 0.6, b: 0.42 }, Math.min(1, (0.4 - h) / 1.5));
+      c.setHex(0xf5dca6).lerp({ r: 0.93, g: 0.8, b: 0.56 }, Math.min(1, Math.max(0, 0.5 - h * 0.08 + Math.sin(x * 0.3) * Math.sin(z * 0.27) * 0.15)));
+      if (h > 5.5) c.lerp({ r: 0.42, g: 0.72, b: 0.26 }, Math.min(0.55, (h - 5.5) * 0.15));
+      if (h < 0.4) c.lerp({ r: 0.8, g: 0.68, b: 0.47 }, Math.min(1, (0.4 - h) / 1.5)); // wet sand
     },
-    sky: { top: 0x3d7fe0, bottom: 0xffd9a8, fog: 0xffe2bd, fogNear: 220, fogFar: 900 },
-    sun: { color: 0xffd8a8, intensity: 2.6, dir: [60, 55, 35] },
-    hemi: { sky: 0xcfe6ff, ground: 0xe0b88a, intensity: 1.05 },
+    sky: { top: 0x1f7ff0, bottom: 0xbfe6ff, fog: 0xd6efff, fogNear: 240, fogFar: 950 },
+    sun: { color: 0xfff0d8, intensity: 3.1, dir: [60, 55, 35] },
+    hemi: { sky: 0xbfe0ff, ground: 0xf0d2a0, intensity: 1.0 },
     decorate(track) {
       const rng = track.rng;
       const R = this.island;
@@ -248,9 +248,9 @@ export const MAPS = {
     groundColor(c, x, z, h, dist, hw) {
       const band = Math.sin(h * 0.55) * 0.5 + 0.5;
       c.setRGB(0.78 + band * 0.1, 0.42 + band * 0.12, 0.25 + band * 0.06);
-      if (dist < hw + 30) c.lerp({ r: 0.86, g: 0.66, b: 0.45 }, 1 - smoothstep(hw, hw + 30, dist));
+      if (dist < hw + 30) c.lerp({ r: 0.78, g: 0.56, b: 0.36 }, 1 - smoothstep(hw, hw + 30, dist));
     },
-    sky: { top: 0x2f7bd6, bottom: 0xf7d9b0, fog: 0xf0cfa6, fogNear: 200, fogFar: 850 },
+    sky: { top: 0x2a86f0, bottom: 0xd8ecfa, fog: 0xf0dcc2, fogNear: 200, fogFar: 850 },
     sun: { color: 0xfff0d6, intensity: 2.9, dir: [-40, 70, 30] },
     hemi: { sky: 0xd8ecff, ground: 0xc77b4a, intensity: 1.0 },
     decorate(track) {
@@ -291,7 +291,8 @@ export const MAPS = {
       [0, 19, 170], [-60, 12, 110], [-130, 9, 160], [-210, 7, 100], [-200, 5, 0], [-150, 3, -80], [-90, 2, -160],
     ],
     jumps: [{ at: 0.6, height: 3.2, length: 22 }],
-    water: { level: -0.6, color: 0x1f8fcc },
+    water: { level: -0.6, color: 0x0b6fc0, shallow: 0x36d4d0 },
+    groundDetail: 'grass',
     road: { base: '#4a4d55', lines: true, curbs: [0xe8432f, 0xffffff] },
     terrain(x, z) {
       const hills = Math.sin(x * 0.008) * Math.cos(z * 0.01) * 7 + Math.sin(x * 0.02 + z * 0.013) * 3 + 4;
@@ -300,7 +301,7 @@ export const MAPS = {
     },
     groundColor(c, x, z, h, dist, hw) {
       const n = Math.sin(x * 0.07) * Math.cos(z * 0.05) * 0.5 + 0.5;
-      c.setRGB(0.36 + n * 0.12, 0.62 + n * 0.1, 0.26 + n * 0.06);
+      c.setRGB(0.2 + n * 0.08, 0.44 + n * 0.1, 0.12 + n * 0.05);
       if (dist < hw + 4) c.setRGB(0.7, 0.7, 0.68);
       if (h < 1.2) c.lerp({ r: 0.93, g: 0.85, b: 0.64 }, Math.min(1, (1.2 - h) / 1.4));
     },
